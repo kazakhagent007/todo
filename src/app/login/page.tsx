@@ -5,7 +5,10 @@ import { FormEvent, useCallback } from 'react';
 
 export default function Login() {
   const onSubmitForm = useCallback((e: FormEvent) => {
-    console.log(e);
+    e.preventDefault();
+    const formData = new FormData(e.target as HTMLFormElement);
+    const login = formData.get('login');
+    const password = formData.get('password');
   }, []);
 
   return (

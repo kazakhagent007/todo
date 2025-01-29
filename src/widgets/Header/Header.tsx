@@ -49,7 +49,7 @@ export function Header() {
               src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600"
               className="h-8 w-auto"
             />
-            <span>REMO_FIRST</span>
+            <span>CYBER_STAFF</span>
           </a>
         </div>
         <div className="flex lg:hidden">

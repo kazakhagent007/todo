@@ -9,3 +9,19 @@ services:
       - "2025:2025"
     environment:
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+
+  postgres:
+    image: postgres:15
+    container_name: postgres_container
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: todo_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

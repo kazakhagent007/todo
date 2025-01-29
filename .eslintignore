@@ -1,0 +1,27 @@
+# Ignore node_modules
+node_modules/
+
+# Ignore build artifacts
+.next/
+out/
+
+# Ignore TypeScript build files (if any)
+*.d.ts
+
+# Ignore environment files
+.env
+.env.*
+
+# Ignore Vite (if used in your setup)
+.vite/
+
+# Ignore generated files
+coverage/
+codegen/
+
+# Ignore Prettier ignore patterns
+.prettierignore
+
+# Ignore configuration files (optional)
+*.config.js
+*.config.ts
