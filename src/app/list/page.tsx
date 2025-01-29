@@ -4,8 +4,9 @@ import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey';
 
-export default function List() {
-  const token = cookies().get('token')?.value;
+export default async function List() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get('token')?.value;
 
   if (!token) {
     redirect('/login');

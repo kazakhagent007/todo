@@ -28,8 +28,8 @@ export default function Login() {
       } else {
         router.push('/list'); // Redirect after login
       }
-    } catch (e) {
-      console.log(e.error);
+    } catch {
+      console.log('error');
     }
   }, []);
 

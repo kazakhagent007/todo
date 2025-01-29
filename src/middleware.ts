@@ -5,8 +5,9 @@ import jwt from 'jsonwebtoken';
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey';
 const protectedRoutes = ['/dashboard'];
 
-export function middleware(req: Request) {
-  const token = cookies().get('token')?.value;
+export async function middleware(req: Request) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get('token')?.value;
   const url = new URL(req.url);
 
   if (protectedRoutes.includes(url.pathname)) {
