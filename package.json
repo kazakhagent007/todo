@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev --port 2025",
     "build": "prisma migrate deploy && next build",
+    "build:prod": "prisma migrate deploy && next build",
     "start": "next start",
     "lint": "next lint --fix .",
     "format": "prettier --write .",
