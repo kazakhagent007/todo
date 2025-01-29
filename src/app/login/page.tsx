@@ -2,8 +2,11 @@
 
 import { Button } from '@headlessui/react';
 import { FormEvent, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Login() {
+  const router = useRouter();
+
   const onSubmitForm = useCallback(async (e: FormEvent) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
@@ -13,10 +16,18 @@ export default function Login() {
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API}/auth/login`, {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
-      }).then((res) => res.json());
+      });
 
       console.log(res);
+
+      if (!res.ok) {
+        console.log('Invalid credentials.');
+        return;
+      } else {
+        router.push('/list'); // Redirect after login
+      }
     } catch (e) {
       console.log(e.error);
     }

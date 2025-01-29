@@ -1,11 +1,22 @@
-'use client';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import jwt from 'jsonwebtoken';
 
-import { FormEvent, useCallback } from 'react';
+const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey';
 
-export default function Login() {
-  const onSubmitForm = useCallback((e: FormEvent) => {
-    console.log(e);
-  }, []);
+export default function List() {
+  const token = cookies().get('token')?.value;
+
+  if (!token) {
+    redirect('/login');
+  }
+
+  let user;
+  try {
+    user = jwt.verify(token, JWT_SECRET);
+  } catch {
+    redirect('/login');
+  }
 
   return (
     <div className="flex flex-col items-center mt-[100px] gap-4">
