@@ -3,9 +3,11 @@
 import { Button } from '@headlessui/react';
 import { FormEvent, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { useMessage } from '@/config/providers/MessageProvider';
 
 export default function Register() {
   const router = useRouter();
+  const { openMessage } = useMessage();
 
   const onSubmitForm = useCallback(async (e: FormEvent) => {
     e.preventDefault();
@@ -23,13 +25,14 @@ export default function Register() {
       console.log(res);
 
       if (!res.ok) {
-        console.log('User exist');
+        openMessage({ title: 'User exist', type: 'warning' });
         return;
       } else {
+        openMessage({ title: 'You have registered successfully!', type: 'success' });
         router.push('/login');
       }
     } catch {
-      console.log('error');
+      openMessage({ title: 'Error on register, try again!', type: 'error' });
     }
   }, []);
 
