@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Dialog,
   DialogPanel,
@@ -23,6 +23,8 @@ import {
 } from '@heroicons/react/24/outline';
 import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid';
 import Link from 'next/link';
+import { AuthContext, useAuthContext } from '@/config/providers/AuthProvider';
+import { DropdownMenu } from '@/entities/DropdownMenu';
 
 const products = [
   { name: 'Analytics', description: 'Get a better understanding of your traffic', href: '#', icon: ChartPieIcon },
@@ -38,6 +40,9 @@ const callsToAction = [
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { token, user } = useAuthContext();
+
+  const isLoggedIn = useMemo(() => !!token, [token]);
 
   return (
     <header className="bg-white border-b border-gray">
@@ -62,19 +67,17 @@ export function Header() {
             <Bars3Icon aria-hidden="true" className="size-6" />
           </button>
         </div>
-        <PopoverGroup className="hidden lg:flex lg:gap-x-12">
-          {/*<a href="#" className="text-sm/6 font-semibold text-gray-900">*/}
-          {/*  List*/}
-          {/*</a>*/}
-        </PopoverGroup>
-        <div className="hidden lg:flex lg:flex-1 lg:justify-end gap-4">
-          <Link href="/login" className="text-sm/6 font-semibold text-gray-900">
-            Login
-          </Link>
-          <Link href="/register" className="text-sm/6 font-semibold text-gray-900">
-            Register
-          </Link>
-        </div>
+        {!isLoggedIn && (
+          <div className="hidden lg:flex lg:flex-1 lg:justify-end gap-4">
+            <Link href="/login" className="text-sm/6 font-semibold text-gray-900">
+              Login
+            </Link>
+            <Link href="/register" className="text-sm/6 font-semibold text-gray-900">
+              Register
+            </Link>
+          </div>
+        )}
+        {isLoggedIn && <DropdownMenu />}
       </nav>
       <Dialog open={mobileMenuOpen} onClose={setMobileMenuOpen} className="lg:hidden">
         <div className="fixed inset-0 z-10" />
@@ -98,32 +101,27 @@ export function Header() {
             </button>
           </div>
           <div className="mt-6 flow-root">
-            <div className="-my-6 divide-y divide-gray-500/10">
-              <div className="space-y-2 py-6">
-                {/*<a*/}
-                {/*  href="#"*/}
-                {/*  className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"*/}
-                {/*>*/}
-                {/*  List*/}
-                {/*</a>*/}
+            {isLoggedIn && (
+              <div className="-my-6 divide-y divide-gray-500/10">
+                <div className="py-6">
+                  <Link
+                    href="/login"
+                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+                  >
+                    Log in
+                  </Link>
+                </div>
+                <div className="py-6">
+                  <Link
+                    href="/register"
+                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+                  >
+                    Register
+                  </Link>
+                </div>
               </div>
-              <div className="py-6">
-                <Link
-                  href="/login"
-                  className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-                >
-                  Log in
-                </Link>
-              </div>
-              <div className="py-6">
-                <Link
-                  href="/register"
-                  className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-                >
-                  Register
-                </Link>
-              </div>
-            </div>
+            )}
+            {isLoggedIn && <DropdownMenu />}
           </div>
         </DialogPanel>
       </Dialog>
