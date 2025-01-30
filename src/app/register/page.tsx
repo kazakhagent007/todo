@@ -46,6 +46,8 @@ export default function Register() {
     }
   };
 
+  console.log(errors);
+
   return (
     <div className="flex flex-col items-center mt-[100px] gap-4">
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
@@ -54,7 +56,13 @@ export default function Register() {
             Login
           </label>
           <input
-            {...register('email', { required: 'Email is required' })}
+            {...register('email', {
+              required: 'Email is required',
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/i,
+                message: 'Invalid email address',
+              },
+            })}
             type="text"
             id="email"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
@@ -67,7 +75,10 @@ export default function Register() {
             Password
           </label>
           <input
-            {...register('password', { required: 'Password is required', minLength: 6 })}
+            {...register('password', {
+              required: 'Password is required',
+              minLength: { value: 6, message: 'Min length of password is 6' },
+            })}
             type="password"
             id="password"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"

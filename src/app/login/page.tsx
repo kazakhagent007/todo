@@ -1,66 +1,78 @@
 'use client';
 
 import { Button } from '@headlessui/react';
-import { FormEvent, useCallback } from 'react';
+import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
+import { useMessage } from '@/config/providers/MessageProvider';
+
+interface FormData {
+  email: string;
+  password: string;
+}
 
 export default function Login() {
   const router = useRouter();
+  const { openMessage } = useMessage();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>();
 
-  const onSubmitForm = useCallback(async (e: FormEvent) => {
-    e.preventDefault();
-    const formData = new FormData(e.target as HTMLFormElement);
-    const email = formData.get('email');
-    const password = formData.get('password');
-    console.log(email, password);
+  const onSubmit = async (data: FormData) => {
     try {
       const res = await fetch(`/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(data),
       });
 
-      console.log(res);
-
       if (!res.ok) {
-        console.log('Invalid credentials.');
+        openMessage({ title: 'Invalid credentials.', type: 'error' });
         return;
-      } else {
-        router.push('/list'); // Redirect after login
       }
+
+      openMessage({ title: 'Login successful!', type: 'success' });
+      router.push('/list');
     } catch {
-      console.log('error');
+      openMessage({ title: 'Error on login, try again!', type: 'error' });
     }
-  }, []);
+  };
 
   return (
     <div className="flex flex-col items-center mt-[100px] gap-4">
-      <form onSubmit={onSubmitForm} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <div>
-          <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 ">
-            Login
+          <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900">
+            Email
           </label>
           <input
-            name="email"
+            {...register('email', {
+              required: 'Email is required',
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/i,
+                message: 'Invalid email address',
+              },
+            })}
             type="text"
             id="email"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            placeholder="Type your login..."
-            required
+            placeholder="Type your email..."
           />
+          {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
         </div>
         <div>
           <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900">
-            Login
+            Password
           </label>
           <input
-            name="password"
+            {...register('password', { required: 'Password is required' })}
             type="password"
             id="password"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            placeholder="Type your login..."
-            required
+            placeholder="Type your password..."
           />
+          {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
         </div>
 
         <Button
