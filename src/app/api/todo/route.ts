@@ -4,6 +4,19 @@ import { verifyToken } from '@src/shared/utils/auth';
 
 const prisma = new PrismaClient();
 
+// GET all todos (requires authentication)
+export async function GET(req: Request) {
+  const user = verifyToken(req);
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+  try {
+    const todos = await prisma.todo.findMany();
+    return NextResponse.json(todos);
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to fetch todos' }, { status: 500 });
+  }
+}
+
 // CREATE a new todo (POST)
 export async function POST(req: Request) {
   const user = verifyToken(req);
