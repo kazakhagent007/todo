@@ -26,14 +26,12 @@ export default function Login() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-
       if (!res.ok) {
         openMessage({ title: 'Invalid credentials.', type: 'error' });
         return;
       }
-
       openMessage({ title: 'Login successful!', type: 'success' });
-      router.push('/list');
+      window.location = '/';
     } catch {
       openMessage({ title: 'Error on login, try again!', type: 'error' });
     }

@@ -8,9 +8,10 @@ function classNames(...classes: string[]) {
 }
 
 export const DropdownMenu = () => {
-  const { user } = useAuthContext();
+  const { user, logout } = useAuthContext();
+
   const handleLogout = () => {
-    alert('Logged out');
+    logout();
   };
 
   return (
