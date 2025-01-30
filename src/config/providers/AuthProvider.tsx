@@ -8,7 +8,7 @@ interface AuthContextType {
   user: User | null;
 }
 
-const AuthContext = createContext<AuthContextType | null>(null);
+const AuthContext = createContext<AuthContextType>({ token: null, user: null });
 
 export default function AuthProvider({ token, children, user }: AuthContextType & { children: ReactNode }) {
   return <AuthContext.Provider value={{ token, user }}>{children}</AuthContext.Provider>;

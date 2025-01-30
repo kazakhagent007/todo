@@ -1,17 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import {
-  Dialog,
-  DialogPanel,
-  Disclosure,
-  DisclosureButton,
-  DisclosurePanel,
-  Popover,
-  PopoverButton,
-  PopoverGroup,
-  PopoverPanel,
-} from '@headlessui/react';
+import { Dialog, DialogPanel } from '@headlessui/react';
 import {
   ArrowPathIcon,
   Bars3Icon,
@@ -21,9 +11,9 @@ import {
   SquaresPlusIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
-import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid';
+import { PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid';
 import Link from 'next/link';
-import { AuthContext, useAuthContext } from '@/config/providers/AuthProvider';
+import { useAuthContext } from '@/config/providers/AuthProvider';
 import { DropdownMenu } from '@/entities/DropdownMenu';
 
 const products = [

@@ -5,7 +5,7 @@ import { MessageAlert } from '@/entities/MessageAlert';
 import { MessageTypes } from '@/entities/types/MessageTypes';
 
 interface MessageContextType {
-  openMessage: ({ title: string, type: MessageTypes }) => void;
+  openMessage: (message: { title: string; type: MessageTypes }) => void;
 }
 
 const MessageContext = createContext<MessageContextType | undefined>(undefined);
@@ -13,7 +13,7 @@ const MessageContext = createContext<MessageContextType | undefined>(undefined);
 export function MessageProvider({ children }: { children: ReactNode }) {
   const [message, setMessage] = useState<{ open: boolean; title: string; type: MessageTypes } | null>(null);
 
-  const openMessage = ({ title, type }) => {
+  const openMessage = ({ title, type }: { title: string; type: MessageTypes }) => {
     setMessage({ title, type, open: true });
   };
 
@@ -27,7 +27,12 @@ export function MessageProvider({ children }: { children: ReactNode }) {
   return (
     <MessageContext.Provider value={{ openMessage }}>
       {children}
-      <MessageAlert {...message} onClose={() => setMessage(null)} />
+      <MessageAlert
+        title={message?.title ?? ''}
+        open={message?.open ?? false}
+        type={message?.type ?? 'success'}
+        onClose={() => setMessage(null)}
+      />
     </MessageContext.Provider>
   );
 }
