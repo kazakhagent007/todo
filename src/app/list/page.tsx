@@ -1,6 +1,9 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import jwt from 'jsonwebtoken';
+import { Button } from '@headlessui/react';
+import { useCallback } from 'react';
+import { CreateButton } from '@/features/CreateButton/CreateButton';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey';
 
@@ -19,9 +22,16 @@ export default async function List() {
     redirect('/login');
   }
 
+  const onClickCreate = () => {
+    console.log('');
+  };
+
   return (
     <div className="flex flex-col items-center mt-[100px] gap-4">
       <div className="relative overflow-x-auto">
+        <div className="flex justify-end mb-6">
+          <CreateButton />
+        </div>
         <table className="w-full text-sm text-left rtl:text-right text-gray-500">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50">
             <tr>
