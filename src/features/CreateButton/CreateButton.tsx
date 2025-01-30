@@ -1,8 +1,9 @@
 'use client';
 
 import { Button, Dialog } from '@headlessui/react';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { useMessage } from '@/config/providers/MessageProvider';
 
 interface FormData {
   title: string;
@@ -11,6 +12,9 @@ interface FormData {
 
 export function CreateButton(props: {}) {
   const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { openMessage } = useMessage();
+
   const {
     register,
     handleSubmit,
@@ -22,9 +26,49 @@ export function CreateButton(props: {}) {
     setIsOpen(true);
   }, []);
 
-  const onSubmit: SubmitHandler<FormData> = (data) => {
-    console.log(data);
-    closeModal();
+  const getTodo = async () => {
+    const res = await fetch(`/api/todo`, {
+      cache: 'no-store',
+      credentials: 'same-origin',
+    });
+    console.log(res);
+
+    if (!res.ok) {
+      throw new Error('Failed to fetch todos');
+    }
+  };
+
+  useEffect(() => {
+    getTodo();
+  }, []);
+
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('token'); // Ensure token is stored and accessible
+
+      const response = await fetch('/api/todo', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+        credentials: 'same-origin',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create todo');
+      }
+
+      openMessage({ title: 'Todo created successfully', type: 'success' });
+      closeModal();
+    } catch (error) {
+      openMessage({ title: error, type: 'warning' });
+    } finally {
+      setLoading(false);
+      openMessage({ title: 'Try again', type: 'error' });
+    }
   };
 
   return (
@@ -74,7 +118,7 @@ export function CreateButton(props: {}) {
                   Cancel
                 </button>
                 <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">
-                  Submit
+                  {loading ? 'Submitting...' : 'Submit'}
                 </button>
               </div>
             </form>

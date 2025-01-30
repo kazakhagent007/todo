@@ -1,12 +1,17 @@
 import jwt from 'jsonwebtoken';
+import { parse } from 'cookie';
 
 const SECRET_KEY = process.env.JWT_SECRET || 'your_secret_key'; // Store in .env
 
 export function verifyToken(req: Request) {
-  const authHeader = req.headers.get('Authorization');
-  if (!authHeader) return null;
+  const cookieHeader = req.headers.get('cookie');
+  if (!cookieHeader) return null;
 
-  const token = authHeader.split(' ')[1]; // Extract token from "Bearer <token>"
+  const cookies = parse(cookieHeader);
+  const token = cookies.token; // Ensure your frontend sends the token in a "token" cookie
+
+  if (!token) return null;
+
   try {
     return jwt.verify(token, SECRET_KEY);
   } catch (error) {

@@ -23,10 +23,14 @@ export async function POST(req: Request) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   try {
-    const { title } = await req.json();
+    const { title, description } = await req.json();
+    console.log(title, description);
+    if (!title) return NextResponse.json({ error: 'Title is required' }, { status: 400 });
+
     const todo = await prisma.todo.create({
-      data: { title },
+      data: { title, description: description || '' },
     });
+
     return NextResponse.json(todo);
   } catch (error) {
     return NextResponse.json({ error: 'Failed to create todo' }, { status: 500 });
