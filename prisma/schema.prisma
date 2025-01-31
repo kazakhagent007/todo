@@ -23,4 +23,5 @@ model Todo {
     author      User     @relation(fields: [authorId], references: [id])
     authorId    String
     completed   Boolean  @default(false)
+    archive   Boolean  @default(false)
 }

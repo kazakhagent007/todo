@@ -4,4 +4,5 @@ export interface Todo {
   description: string;
   authorId: string;
   createdAt: string;
+  completed: boolean;
 }

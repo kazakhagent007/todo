@@ -1,14 +1,14 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { verifyToken } from '@/shared/utils/auth';
 
 const prisma = new PrismaClient();
 
 // GET all todos for the authenticated user
-export async function GET(req: Request) {
-  const user = verifyToken(req);
+export async function GET(req: NextRequest) {
+  const user = await verifyToken(req);
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
+  console.log(user);
   try {
     const todos = await prisma.todo.findMany({
       where: { authorId: user.id }, // Fetch only user's todos
@@ -20,13 +20,13 @@ export async function GET(req: Request) {
 }
 
 // CREATE a new todo (POST)
-export async function POST(req: Request) {
-  const user = verifyToken(req);
+export async function POST(req: NextRequest) {
+  const user = await verifyToken(req);
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   try {
     const { title, description } = await req.json();
-    console.log(title, description);
+
     if (!title) return NextResponse.json({ error: 'Title is required' }, { status: 400 });
 
     const todo = await prisma.todo.create({

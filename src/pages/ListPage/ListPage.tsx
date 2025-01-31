@@ -1,21 +1,44 @@
 'use client';
 
-import { CreateButton } from '@/features/CreateButton/CreateButton';
 import { Todo } from '@/entities/types/Todo';
 import { TodoRow } from '@/features/TodoRow/TodoRow';
 import { EditTodoModal } from '@/entities/EditTodoModal';
 import { DeleteTodoConfirmation } from '@/entities/DeleteTodoConfirmation';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@headlessui/react';
 
-interface Props {
-  todos: Todo[];
-}
-
-export default function ListPage({ todos }: Props) {
+export default function ListPage() {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [currentTodo, setCurrentTodo] = useState<Todo>();
+  const [todos, setTodos] = useState<Todo[]>([]);
+
+  async function getTodos(): Promise<Todo[]> {
+    const res = await fetch(`/api/todo`, {
+      credentials: 'same-origin',
+    });
+    if (!res.ok) {
+      console.error('Failed to fetch todos', res.status);
+      throw new Error('Failed to fetch todos');
+    }
+    const tt = (await res.json()) as Todo[];
+    console.log(tt);
+    setTodos(tt);
+  }
+
+  async function onCompleteTodo(todo: Todo) {
+    const res = await fetch(`/api/todo/${todo.id}`, {
+      method: 'PUT',
+      body: JSON.stringify({ ...todo, completed: true }),
+      credentials: 'same-origin',
+    });
+
+    if (!res.ok) {
+      console.error('Failed to complete todo', res.status);
+    } else {
+      updateList();
+    }
+  }
 
   const onClickEdit = useCallback((todo: Todo) => {
     setCurrentTodo(todo);
@@ -29,6 +52,14 @@ export default function ListPage({ todos }: Props) {
 
   const onClickCreate = useCallback(() => {
     setIsEditOpen(true);
+  }, []);
+
+  const updateList = () => {
+    getTodos();
+  };
+
+  useEffect(() => {
+    getTodos();
   }, []);
 
   return (
@@ -73,15 +104,21 @@ export default function ListPage({ todos }: Props) {
                 todo={todo}
                 onClickEdit={() => onClickEdit(todo)}
                 onClickDelete={() => onClickDelete(todo)}
+                completeTodo={() => onCompleteTodo(todo)}
               />
             ))}
           </tbody>
         </table>
       </div>
-      <EditTodoModal isOpen={isEditOpen} setIsOpen={setIsEditOpen} todo={currentTodo} />
+      <EditTodoModal isOpen={isEditOpen} setIsOpen={setIsEditOpen} todo={currentTodo} updateList={updateList} />
 
       {currentTodo && (
-        <DeleteTodoConfirmation isOpen={isDeleteOpen} setIsOpen={setIsDeleteOpen} todoId={currentTodo.id} />
+        <DeleteTodoConfirmation
+          isOpen={isDeleteOpen}
+          setIsOpen={setIsDeleteOpen}
+          todoId={currentTodo.id}
+          updateList={updateList}
+        />
       )}
     </div>
   );

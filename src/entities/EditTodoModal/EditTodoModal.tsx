@@ -13,9 +13,10 @@ interface Props {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   todo?: Todo;
+  updateList: () => void;
 }
 
-export function EditTodoModal({ isOpen, setIsOpen, todo }: Props) {
+export function EditTodoModal({ isOpen, setIsOpen, todo, updateList }: Props) {
   const [loading, setLoading] = useState(false);
   const { openMessage } = useMessage();
   const {
@@ -39,7 +40,7 @@ export function EditTodoModal({ isOpen, setIsOpen, todo }: Props) {
         throw new Error('Failed to create todo');
       } else {
         openMessage({ title: 'Todo created successfully', type: 'success' });
-        window.location.reload();
+        updateList();
       }
     } catch (error) {
       openMessage({ title: (error as Error).message, type: 'warning' });
@@ -53,7 +54,6 @@ export function EditTodoModal({ isOpen, setIsOpen, todo }: Props) {
 
   return (
     <Dialog open={isOpen} onClose={closeModal}>
-      {/*<Dialog.Overlay className="fixed inset-0 bg-black opacity-30"/>*/}
       <div className="fixed inset-0 bg-black opacity-30" onClick={closeModal}></div>
 
       <div className="fixed inset-0 flex items-center justify-center z-50">

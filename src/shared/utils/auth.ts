@@ -1,14 +1,14 @@
 import jwt from 'jsonwebtoken';
-import { parse } from 'cookie';
+import { cookies } from 'next/headers';
+import { NextRequest } from 'next/server';
 
 const SECRET_KEY = process.env.JWT_SECRET || 'your_secret_key'; // Store in .env
 
-export function verifyToken(req: Request) {
-  const cookieHeader = req.headers.get('cookie');
-  if (!cookieHeader) return null;
+export async function verifyToken(req: NextRequest) {
+  const cookieStore = await cookies();
+  if (!cookieStore) return null;
 
-  const cookies = parse(cookieHeader);
-  const token = cookies.token; // Ensure your frontend sends the token in a "token" cookie
+  const token = cookieStore.get('token')?.value;
 
   if (!token) return null;
 

@@ -1,17 +1,16 @@
 import { verifyToken } from '@/shared/utils/auth';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
-  const user = verifyToken(req);
+export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+  const user = await verifyToken(req);
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   try {
-    const param = await params;
-    const id = param.id;
-    const { title, description, completed } = await req.json();
+    const { id } = await params;
+    const { title, description, completed } = await req.json(); // Parse body as JSON
     console.log(id, title, description, completed);
     if (!id) return NextResponse.json({ error: 'ID is required' }, { status: 400 });
 
@@ -26,7 +25,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 
     const updatedTodo = await prisma.todo.update({
       where: { id },
-      data: { title, description, completed },
+      data: { title, description, completed: true },
     });
 
     return NextResponse.json(updatedTodo);
@@ -35,12 +34,13 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
-  const user = verifyToken(req);
+export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+  const user = await verifyToken(req);
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   try {
-    const id = params.id;
+    const { id } = await params;
+
     if (!id) return NextResponse.json({ error: 'ID is required' }, { status: 400 });
 
     // Ensure the todo belongs to the user
