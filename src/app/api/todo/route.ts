@@ -8,10 +8,10 @@ const prisma = new PrismaClient();
 export async function GET(req: NextRequest) {
   const user = await verifyToken(req);
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  console.log(user);
+  const userId = (user as { id: string }).id;
   try {
     const todos = await prisma.todo.findMany({
-      where: { authorId: user.id }, // Fetch only user's todos
+      where: { authorId: userId }, // Fetch only user's todos
     });
     return NextResponse.json(todos);
   } catch (error) {
@@ -29,11 +29,13 @@ export async function POST(req: NextRequest) {
 
     if (!title) return NextResponse.json({ error: 'Title is required' }, { status: 400 });
 
+    const userId = (user as { id: string }).id;
+
     const todo = await prisma.todo.create({
       data: {
         title,
         description: description || '',
-        authorId: user.id, // Ensure the todo is linked to the user
+        authorId: userId, // Ensure the todo is linked to the user
       },
     });
 

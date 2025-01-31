@@ -4,7 +4,7 @@ import { useMessage } from '@/config/providers/MessageProvider';
 interface Props {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
-  todoId: number;
+  todoId: string;
   updateList: () => void;
 }
 

@@ -31,7 +31,7 @@ export default function Login() {
         return;
       }
       openMessage({ title: 'Login successful!', type: 'success' });
-      window.location = '/';
+      window.location.href = '/';
     } catch {
       openMessage({ title: 'Error on login, try again!', type: 'error' });
     }

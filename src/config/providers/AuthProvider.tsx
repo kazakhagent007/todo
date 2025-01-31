@@ -4,9 +4,11 @@ import { createContext, ReactNode, useContext, useState } from 'react';
 import { User } from '@/entities/types';
 import { useRouter } from 'next/navigation';
 
-interface AuthContextType {
+interface AuthProviderType {
   token: string | null;
   user: User | null;
+}
+interface AuthContextType extends AuthProviderType {
   logout: () => void;
 }
 
@@ -16,7 +18,7 @@ export default function AuthProvider({
   token: initialToken,
   children,
   user: initialUser,
-}: AuthContextType & { children: ReactNode }) {
+}: AuthProviderType & { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(initialToken);
   const [user, setUser] = useState<User | null>(initialUser);
   const router = useRouter();

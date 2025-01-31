@@ -4,7 +4,7 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await verifyToken(req);
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
@@ -19,13 +19,15 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       where: { id },
     });
 
-    if (!existingTodo || existingTodo.authorId !== user.id) {
+    const userId = (user as { id: string }).id;
+
+    if (!existingTodo || existingTodo.authorId !== userId) {
       return NextResponse.json({ error: 'Todo not found or access denied' }, { status: 404 });
     }
 
     const updatedTodo = await prisma.todo.update({
       where: { id },
-      data: { title, description, completed: true },
+      data: { title, description, completed },
     });
 
     return NextResponse.json(updatedTodo);
@@ -34,7 +36,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await verifyToken(req);
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
@@ -48,7 +50,9 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
       where: { id },
     });
 
-    if (!existingTodo || existingTodo.authorId !== user.id) {
+    const userId = (user as { id: string }).id;
+
+    if (!existingTodo || existingTodo.authorId !== userId) {
       return NextResponse.json({ error: 'Todo not found or access denied' }, { status: 404 });
     }
 

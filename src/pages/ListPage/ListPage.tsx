@@ -13,7 +13,7 @@ export default function ListPage() {
   const [currentTodo, setCurrentTodo] = useState<Todo>();
   const [todos, setTodos] = useState<Todo[]>([]);
 
-  async function getTodos(): Promise<Todo[]> {
+  async function getTodos() {
     const res = await fetch(`/api/todo`, {
       credentials: 'same-origin',
     });
