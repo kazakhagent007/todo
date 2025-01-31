@@ -18,16 +18,18 @@ export function TodoRow({ todo, index, onClickEdit, onClickDelete, completeTodo 
         <td className="px-6 py-4">{index + 1}</td>
         <td className="px-6 py-4">{todo.title}</td>
         <td className="px-6 py-4">{todo.description}</td>
-        <td className="px-6 py-4">{dayjs(todo.createdAt).format('DD.MM.YYYY')}</td>
+        <td className="px-6 py-4">{dayjs(todo.createdAt).format('DD.MM.YYYY hh:mm')}</td>
         <td className="px-6 py-4">{todo.completed ? '✅' : '❌'}</td>
         <td className="px-6 py-4 flex gap-2">
-          <button className="text-blue-600 hover:underline" onClick={onClickEdit}>
-            Edit
-          </button>
-
           <button className="text-red-600 hover:underline" onClick={onClickDelete}>
             Delete
           </button>
+
+          {!todo.completed && (
+            <button className="text-blue-600 hover:underline" onClick={onClickEdit}>
+              Edit
+            </button>
+          )}
 
           {!todo.completed && (
             <button className="text-green-600 hover:underline" onClick={completeTodo}>

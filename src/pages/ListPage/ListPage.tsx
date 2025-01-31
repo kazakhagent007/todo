@@ -51,6 +51,7 @@ export default function ListPage() {
   }, []);
 
   const onClickCreate = useCallback(() => {
+    setCurrentTodo(undefined);
     setIsEditOpen(true);
   }, []);
 
@@ -89,7 +90,7 @@ export default function ListPage() {
                 Created At
               </th>
               <th scope="col" className="px-6 py-3">
-                Done
+                Completed
               </th>
               <th scope="col" className="px-6 py-3">
                 Actions
@@ -110,7 +111,9 @@ export default function ListPage() {
           </tbody>
         </table>
       </div>
-      <EditTodoModal isOpen={isEditOpen} setIsOpen={setIsEditOpen} todo={currentTodo} updateList={updateList} />
+      {isEditOpen && (
+        <EditTodoModal isOpen={isEditOpen} setIsOpen={setIsEditOpen} todo={currentTodo} updateList={updateList} />
+      )}
 
       {currentTodo && (
         <DeleteTodoConfirmation

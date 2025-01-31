@@ -28,18 +28,17 @@ export function EditTodoModal({ isOpen, setIsOpen, todo, updateList }: Props) {
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token'); // Ensure token is stored and accessible
-
-      const response = await fetch('/api/todo', {
-        method: 'POST',
-        body: JSON.stringify(data),
+      const url = todo?.id ? `/api/todo/${todo.id}` : '/api/todo';
+      const response = await fetch(url, {
+        method: todo?.id ? 'PUT' : 'POST',
+        body: JSON.stringify(todo?.id ? { ...todo, ...data } : data),
         credentials: 'same-origin',
       });
 
       if (!response.ok) {
         throw new Error('Failed to create todo');
       } else {
-        openMessage({ title: 'Todo created successfully', type: 'success' });
+        openMessage({ title: todo?.id ? 'Todo updated successfully' : 'Todo created successfully', type: 'success' });
         updateList();
       }
     } catch (error) {
@@ -70,7 +69,7 @@ export function EditTodoModal({ isOpen, setIsOpen, todo, updateList }: Props) {
                 {...register('title', { required: 'Title is required' })}
                 type="text"
                 className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-                defaultValue={todo?.title}
+                defaultValue={todo?.title ?? ''}
               />
               {errors.title && <span className="text-red-500 text-sm">{errors.title.message}</span>}
             </div>
@@ -84,7 +83,7 @@ export function EditTodoModal({ isOpen, setIsOpen, todo, updateList }: Props) {
                 {...register('description')}
                 className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
                 rows={4}
-                defaultValue={todo?.description}
+                defaultValue={todo?.description ?? ''}
               />
             </div>
 
