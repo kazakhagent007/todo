@@ -59,15 +59,14 @@ export function CreateButton(props: {}) {
 
       if (!response.ok) {
         throw new Error('Failed to create todo');
+      } else {
+        openMessage({ title: 'Todo created successfully', type: 'success' });
       }
-
-      openMessage({ title: 'Todo created successfully', type: 'success' });
-      closeModal();
     } catch (error) {
       openMessage({ title: error, type: 'warning' });
     } finally {
       setLoading(false);
-      openMessage({ title: 'Try again', type: 'error' });
+      closeModal();
     }
   };
 

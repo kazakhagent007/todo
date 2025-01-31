@@ -12,7 +12,7 @@ model User {
   email     String   @unique
   password  String
   createdAt DateTime @default(now())
-  todos     Todo[]   @relation("UserTodos") // Explicitly name the relation
+  todos     Todo[]
 }
 
 model Todo {
@@ -20,6 +20,6 @@ model Todo {
   title       String
   description String
   createdAt   DateTime @default(now())
-  userId      String   // Foreign key to User
-  user        User     @relation("UserTodos", fields: [userId], references: [id]) // Use the same relation name
+  author   User @relation(fields: [authorId], references: [id])
+    authorId String
 }
