@@ -3,13 +3,13 @@
 import { Todo } from '@/entities/types/Todo';
 import dayjs from 'dayjs';
 
-async function completeTodo(id: string) {
-  const res = await fetch(`/api/todo/${id}`, {
+async function completeTodo(todo: Todo) {
+  const res = await fetch(`/api/todo/${todo.id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ done: true }),
+    body: JSON.stringify({ ...todo, completed: true }),
     credentials: 'same-origin',
   });
 
@@ -38,7 +38,7 @@ export function TodoRow({ todo, index, onClickEdit, onClickDelete }: Props) {
           <button className="text-blue-600 hover:underline" onClick={onClickEdit}>
             Edit
           </button>
-          <button className="text-green-600 hover:underline" onClick={() => completeTodo(todo.id)}>
+          <button className="text-green-600 hover:underline" onClick={() => completeTodo(todo)}>
             Complete
           </button>
           <button className="text-red-600 hover:underline" onClick={onClickDelete}>

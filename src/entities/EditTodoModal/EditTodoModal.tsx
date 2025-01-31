@@ -1,27 +1,103 @@
 import { Todo } from '@/entities/types/Todo';
 import { Dialog } from '@headlessui/react';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { useState } from 'react';
+import { useMessage } from '@/config/providers/MessageProvider';
 
-export function EditTodoModal({
-  isOpen,
-  setIsOpen,
-  todo,
-}: {
+interface FormData {
+  title: string;
+  description?: string;
+}
+
+interface Props {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
-  todo: Todo;
-}) {
+  todo?: Todo;
+}
+
+export function EditTodoModal({ isOpen, setIsOpen, todo }: Props) {
+  const [loading, setLoading] = useState(false);
+  const { openMessage } = useMessage();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>();
+
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('token'); // Ensure token is stored and accessible
+
+      const response = await fetch('/api/todo', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        credentials: 'same-origin',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create todo');
+      } else {
+        openMessage({ title: 'Todo created successfully', type: 'success' });
+        window.location.reload();
+      }
+    } catch (error) {
+      openMessage({ title: (error as Error).message, type: 'warning' });
+    } finally {
+      setLoading(false);
+      closeModal();
+    }
+  };
+
+  const closeModal = () => setIsOpen(false);
+
   return (
-    <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="fixed inset-0 flex items-center justify-center">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-        <Dialog.Title className="text-lg font-bold">Edit Todo</Dialog.Title>
-        <input type="text" className="border w-full p-2 mt-2" defaultValue={todo.title} />
-        <textarea className="border w-full p-2 mt-2" defaultValue={todo.description}></textarea>
-        <div className="flex justify-end gap-2 mt-4">
-          <button className="px-4 py-2 bg-gray-200 rounded" onClick={() => setIsOpen(false)}>
-            Cancel
-          </button>
-          <button className="px-4 py-2 bg-blue-500 text-white rounded">Save</button>
-        </div>
+    <Dialog open={isOpen} onClose={closeModal}>
+      {/*<Dialog.Overlay className="fixed inset-0 bg-black opacity-30"/>*/}
+      <div className="fixed inset-0 bg-black opacity-30" onClick={closeModal}></div>
+
+      <div className="fixed inset-0 flex items-center justify-center z-50">
+        <Dialog.Panel className="bg-white p-6 rounded-lg shadow-lg w-96">
+          <Dialog.Title className="text-xl font-bold">Create New Item</Dialog.Title>
+
+          <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
+            <div className="mb-4">
+              <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+                Title
+              </label>
+              <input
+                id="title"
+                {...register('title', { required: 'Title is required' })}
+                type="text"
+                className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                defaultValue={todo?.title}
+              />
+              {errors.title && <span className="text-red-500 text-sm">{errors.title.message}</span>}
+            </div>
+
+            <div className="mb-4">
+              <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                Description
+              </label>
+              <textarea
+                id="description"
+                {...register('description')}
+                className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                rows={4}
+                defaultValue={todo?.description}
+              />
+            </div>
+
+            <div className="flex justify-end space-x-4">
+              <button type="button" onClick={closeModal} className="px-4 py-2 bg-gray-300 text-gray-700 rounded">
+                Cancel
+              </button>
+              <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">
+                {loading ? 'Submitting...' : 'Submit'}
+              </button>
+            </div>
+          </form>
+        </Dialog.Panel>
       </div>
     </Dialog>
   );

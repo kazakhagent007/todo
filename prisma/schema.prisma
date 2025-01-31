@@ -16,10 +16,11 @@ model User {
 }
 
 model Todo {
-  id          String   @id @default(uuid())
-  title       String
-  description String
-  createdAt   DateTime @default(now())
-  author   User @relation(fields: [authorId], references: [id])
-    authorId String
+    id          String   @id @default(uuid())
+    title       String
+    description String
+    createdAt   DateTime @default(now())
+    author      User     @relation(fields: [authorId], references: [id])
+    authorId    String
+    completed   Boolean  @default(false)
 }

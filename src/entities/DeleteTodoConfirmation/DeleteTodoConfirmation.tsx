@@ -17,7 +17,7 @@ export function DeleteTodoConfirmation({
 }: {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
-  todoId: string;
+  todoId: number;
 }) {
   return (
     <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="fixed inset-0 flex items-center justify-center">

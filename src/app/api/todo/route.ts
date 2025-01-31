@@ -26,6 +26,7 @@ export async function POST(req: Request) {
 
   try {
     const { title, description } = await req.json();
+    console.log(title, description);
     if (!title) return NextResponse.json({ error: 'Title is required' }, { status: 400 });
 
     const todo = await prisma.todo.create({
@@ -39,59 +40,5 @@ export async function POST(req: Request) {
     return NextResponse.json(todo);
   } catch (error) {
     return NextResponse.json({ error: 'Failed to create todo' }, { status: 500 });
-  }
-}
-
-// UPDATE a todo (PUT)
-export async function PUT(req: Request) {
-  const user = verifyToken(req);
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
-  try {
-    const { id, title, description } = await req.json();
-    if (!id) return NextResponse.json({ error: 'ID is required' }, { status: 400 });
-
-    // Ensure the todo belongs to the user
-    const existingTodo = await prisma.todo.findUnique({
-      where: { id },
-    });
-
-    if (!existingTodo || existingTodo.authorId !== user.id) {
-      return NextResponse.json({ error: 'Todo not found or access denied' }, { status: 404 });
-    }
-
-    const updatedTodo = await prisma.todo.update({
-      where: { id },
-      data: { title, description },
-    });
-
-    return NextResponse.json(updatedTodo);
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to update todo' }, { status: 500 });
-  }
-}
-
-// DELETE a todo (DELETE)
-export async function DELETE(req: Request) {
-  const user = verifyToken(req);
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
-  try {
-    const { id } = await req.json();
-    if (!id) return NextResponse.json({ error: 'ID is required' }, { status: 400 });
-
-    // Ensure the todo belongs to the user
-    const existingTodo = await prisma.todo.findUnique({
-      where: { id },
-    });
-
-    if (!existingTodo || existingTodo.authorId !== user.id) {
-      return NextResponse.json({ error: 'Todo not found or access denied' }, { status: 404 });
-    }
-
-    await prisma.todo.delete({ where: { id } });
-    return NextResponse.json({ message: 'Todo deleted successfully' });
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to delete todo' }, { status: 500 });
   }
 }

@@ -9,11 +9,11 @@ import ListPage from '@/pages/ListPage/ListPage';
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey';
 
 async function getTodos(): Promise<Todo[]> {
-  const head = headers();
+  const head = await headers();
   const host = head.get('host');
   const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
 
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const cookieHeader = cookieStore
     .getAll()
     .map(({ name, value }) => `${name}=${value}`)
@@ -35,7 +35,7 @@ async function getTodos(): Promise<Todo[]> {
 }
 
 export default async function List() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const token = cookieStore.get('token')?.value;
 
   if (!token) {

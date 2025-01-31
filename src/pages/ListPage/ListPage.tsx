@@ -6,6 +6,7 @@ import { TodoRow } from '@/features/TodoRow/TodoRow';
 import { EditTodoModal } from '@/entities/EditTodoModal';
 import { DeleteTodoConfirmation } from '@/entities/DeleteTodoConfirmation';
 import { useCallback, useState } from 'react';
+import { Button } from '@headlessui/react';
 
 interface Props {
   todos: Todo[];
@@ -26,11 +27,20 @@ export default function ListPage({ todos }: Props) {
     setIsDeleteOpen(true);
   }, []);
 
+  const onClickCreate = useCallback(() => {
+    setIsEditOpen(true);
+  }, []);
+
   return (
     <div className="flex flex-col items-center mt-[100px] gap-4">
       <div className="relative overflow-x-auto">
         <div className="flex justify-end mb-6">
-          <CreateButton />
+          <Button
+            onClick={onClickCreate}
+            className="inline-flex items-center gap-2 rounded-md bg-gray-700 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white"
+          >
+            Create
+          </Button>
         </div>
         <table className="w-full text-sm text-left rtl:text-right text-gray-500">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50">
@@ -68,12 +78,10 @@ export default function ListPage({ todos }: Props) {
           </tbody>
         </table>
       </div>
-      {currentTodo && (
-        <>
-          <EditTodoModal isOpen={isEditOpen} setIsOpen={setIsEditOpen} todo={currentTodo} />
+      <EditTodoModal isOpen={isEditOpen} setIsOpen={setIsEditOpen} todo={currentTodo} />
 
-          <DeleteTodoConfirmation isOpen={isDeleteOpen} setIsOpen={setIsDeleteOpen} todoId={currentTodo.id} />
-        </>
+      {currentTodo && (
+        <DeleteTodoConfirmation isOpen={isDeleteOpen} setIsOpen={setIsDeleteOpen} todoId={currentTodo.id} />
       )}
     </div>
   );
